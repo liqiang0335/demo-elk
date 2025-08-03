@@ -5,12 +5,12 @@ filebeat.inputs:
   paths:
     - "/usr/share/filebeat/source/*.log"
   
-  # 多行处理：匹配真正的新日志条目开始
-  # 新日志条目的特征：时间戳 + IP + JSON对象开始
-  multiline.pattern: '^\[[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\] /[^:]+:\d+ - '
+  # 多行处理：只有以时间戳+IP+JSON开始符{的行才是新日志
+  # 其他行都应该被合并到前一行
+  multiline.pattern: '^\[[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\] /[^:]+:\d+ - \{'
   multiline.negate: true  
   multiline.match: after
-  multiline.max_lines: 500
+  multiline.max_lines: 1000
   multiline.timeout: 30s
   
   # 添加字段标识来源
@@ -21,8 +21,8 @@ filebeat.inputs:
   
   # 优化文件读取
   scan_frequency: 5s
-  harvester_buffer_size: 16384
-  max_bytes: 10485760
+  harvester_buffer_size: 32768
+  max_bytes: 20971520
   ignore_older: 0
   close_inactive: 5m
   
