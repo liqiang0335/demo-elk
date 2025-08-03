@@ -3,37 +3,31 @@ filebeat.inputs:
 - type: log
   enabled: true
   paths:
-    - "/usr/share/filebeat/source/raw_data*.log"
+    - "/usr/share/filebeat/source/*.log"
   
-  # 多行日志处理 - 合并被分割的 JSON 数据
-  multiline.pattern: '^\[20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]'
-  multiline.negate: true
+  # 多行处理：匹配真正的新日志条目开始
+  # 新日志条目的特征：时间戳 + IP + JSON对象开始
+  multiline.pattern: '^\[[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\] /[^:]+:\d+ - \{'
+  multiline.negate: true  
   multiline.match: after
-  multiline.max_lines: 1000
+  multiline.max_lines: 100
+  multiline.timeout: 30s
   
   # 添加字段标识来源
   fields:
     log_type: "raw_data"
     service: "iot_gateway"
   fields_under_root: true
-
-# 可选: Docker 容器日志
-- type: container
-  enabled: false
-  paths:
-    - '/var/lib/docker/containers/*/*.log'
   
-  processors:
-  - add_docker_metadata:
-      host: "unix:///var/run/docker.sock"
-
-# 可选: 监控系统日志
-- type: log
-  enabled: false
-  paths:
-    - /var/log/*.log
-    - /var/log/messages
-    - /var/log/syslog
+  # 优化文件读取
+  scan_frequency: 5s
+  harvester_buffer_size: 16384
+  max_bytes: 10485760
+  ignore_older: 0
+  close_inactive: 5m
+  
+  # 排除空行和只有空白字符的行
+  exclude_lines: ['^$', '^\s*$']
 
 # 处理器
 processors:

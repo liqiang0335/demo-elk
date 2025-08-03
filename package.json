@@ -1,0 +1,24 @@
+{
+  "name": "demo-elk",
+  "version": "1.0.0",
+  "description": "本项目用于在 macOS 上通过 Docker 快速部署 ELK Stack 进行本地测试。",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "liqiang0335",
+  "license": "ISC",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^20.19.9"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.13"
+  }
+}
