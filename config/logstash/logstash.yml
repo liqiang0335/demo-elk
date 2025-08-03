@@ -15,3 +15,9 @@ api.http.port: 9600
 # Log level
 log.level: info
 path.logs: /var/log/logstash
+
+# Enable automatic config reload
+pipeline.reload.automatic: true
+pipeline.reload.interval: 3s
+config.reload.automatic: true
+config.reload.interval: 3s
