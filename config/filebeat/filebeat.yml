@@ -1,17 +1,31 @@
 filebeat.inputs:
+# 读取 raw_data 日志文件
+- type: log
+  enabled: true
+  paths:
+    - "/usr/share/filebeat/source/raw_data*.log"
+  
+  # 多行日志处理 - 合并被分割的 JSON 数据
+  multiline.pattern: '^\[20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]'
+  multiline.negate: true
+  multiline.match: after
+  multiline.max_lines: 1000
+  
+  # 添加字段标识来源
+  fields:
+    log_type: "raw_data"
+    service: "iot_gateway"
+  fields_under_root: true
+
+# 可选: Docker 容器日志
 - type: container
+  enabled: false
   paths:
     - '/var/lib/docker/containers/*/*.log'
   
-  # 解析 Docker 容器日志的 JSON 格式
   processors:
   - add_docker_metadata:
       host: "unix:///var/run/docker.sock"
-  
-  # 多行日志处理 (例如 Java 堆栈跟踪)
-  multiline.pattern: '^\d{4}-\d{2}-\d{2}'
-  multiline.negate: true
-  multiline.match: after
 
 # 可选: 监控系统日志
 - type: log
