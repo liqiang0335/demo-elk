@@ -1,0 +1,26 @@
+cluster.name: "docker-cluster"
+network.host: 0.0.0.0
+
+# Disable X-Pack security features
+xpack.security.enabled: false
+xpack.security.enrollment.enabled: false
+xpack.security.http.ssl.enabled: false
+xpack.security.transport.ssl.enabled: false
+
+# Disable machine learning features to save memory
+xpack.ml.enabled: false
+
+# Discovery settings for single node
+discovery.type: single-node
+
+# Path settings
+path.data: /usr/share/elasticsearch/data
+path.logs: /usr/share/elasticsearch/logs
+
+# Memory settings
+bootstrap.memory_lock: true
+
+# HTTP settings
+http.port: 9200
+http.cors.enabled: true
+http.cors.allow-origin: "*"

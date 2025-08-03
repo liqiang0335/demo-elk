@@ -1,0 +1,53 @@
+filebeat.inputs:
+- type: container
+  paths:
+    - '/var/lib/docker/containers/*/*.log'
+  
+  # 解析 Docker 容器日志的 JSON 格式
+  processors:
+  - add_docker_metadata:
+      host: "unix:///var/run/docker.sock"
+  
+  # 多行日志处理 (例如 Java 堆栈跟踪)
+  multiline.pattern: '^\d{4}-\d{2}-\d{2}'
+  multiline.negate: true
+  multiline.match: after
+
+# 可选: 监控系统日志
+- type: log
+  enabled: false
+  paths:
+    - /var/log/*.log
+    - /var/log/messages
+    - /var/log/syslog
+
+# 处理器
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+
+# 输出到 Logstash
+output.logstash:
+  hosts: ["logstash:5044"]
+
+# 可选: 直接输出到 Elasticsearch (注释掉上面的 Logstash 输出)
+# output.elasticsearch:
+#   hosts: ["elasticsearch:9200"]
+#   index: "filebeat-%{+yyyy.MM.dd}"
+
+# 日志级别
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7
+  permissions: 0644
+
+# 禁用 SSL 验证
+ssl.verification_mode: none
+
+# 监控配置
+monitoring.enabled: false
