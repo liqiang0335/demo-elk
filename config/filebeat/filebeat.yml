@@ -7,11 +7,11 @@ filebeat.inputs:
   
   # 多行处理：匹配真正的新日志条目开始
   # 新日志条目的特征：时间戳 + IP + JSON对象开始
-  multiline.pattern: '^\[[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\] /[^:]+:\d+ - '
+  multiline.pattern: '^\[[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\] /[^:]+:\d+ - {'
   multiline.negate: true  
   multiline.match: after
-  multiline.max_lines: 500
-  multiline.timeout: 30s
+  multiline.max_lines: 1000
+  multiline.timeout: 60s
   
   # 添加字段标识来源
   fields:
